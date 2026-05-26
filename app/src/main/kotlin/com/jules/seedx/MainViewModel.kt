@@ -27,11 +27,16 @@ class MainViewModel(application: Application) : AndroidViewModel(application) {
 
     fun onSeedChange(newSeed: String) {
         seed = newSeed
-        prefs.edit().putString("last_seed", newSeed).apply()
+        // Use commit() to ensure it's saved immediately and synchronously if needed
+        prefs.edit().putString("last_seed", newSeed).commit()
     }
 
     fun search() {
-        val s = seed.trim().toLongOrNull() ?: 0L
+        val sStr = seed.trim()
+        // Final save before search just in case
+        prefs.edit().putString("last_seed", sStr).commit()
+
+        val s = sStr.toLongOrNull() ?: 0L
         val cx = centerX.toIntOrNull() ?: 0
         val cz = centerZ.toIntOrNull() ?: 0
         val r = range.toIntOrNull() ?: 10000
