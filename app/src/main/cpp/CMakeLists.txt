@@ -7,6 +7,9 @@ add_library(seedx SHARED native-lib.cpp
     cubiomes/finders.c
     cubiomes/util.c
     cubiomes/quadbase.c
+    cubiomes/biomes.c
+    cubiomes/noise.c
+    cubiomes/biomenoise.c
 )
 
 target_include_directories(seedx PRIVATE cubiomes)

@@ -1,6 +1,7 @@
 #include <jni.h>
 #include <string>
 #include <vector>
+#include <cstdio>
 #include "cubiomes/generator.h"
 #include "cubiomes/finders.h"
 
@@ -17,19 +18,20 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
 ) {
     Generator g;
     setupGenerator(&g, MC_1_21, 0);
+    applySeed(&g, DIM_OVERWORLD, seed);
 
     StructureConfig config;
-    if (type == 0) {
-        config = Swampland_Hut_Config;
-    } else {
-        config = Fortress_Config;
+    int structType = (type == 0) ? Swamp_Hut : Fortress;
+    if (!getStructureConfig(structType, MC_1_21, &config)) {
+        return env->NewObjectArray(0, env->FindClass("java/lang/String"), env->NewStringUTF(""));
     }
 
-    int regionRange = (range / (int)config.spacing) + 2;
-    int startRegionX = (centerX / (int)config.spacing) - regionRange;
-    int startRegionZ = (centerZ / (int)config.spacing) - regionRange;
-    int endRegionX = (centerX / (int)config.spacing) + regionRange;
-    int endRegionZ = (centerZ / (int)config.spacing) + regionRange;
+    int spacing = config.regionSize;
+    int regionRange = (range / (spacing * 16)) + 2;
+    int startRegionX = (centerX / (spacing * 16)) - regionRange;
+    int startRegionZ = (centerZ / (spacing * 16)) - regionRange;
+    int endRegionX = (centerX / (spacing * 16)) + regionRange;
+    int endRegionZ = (centerZ / (spacing * 16)) + regionRange;
 
     std::vector<std::string> results;
 
@@ -40,26 +42,22 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
             for (int i = 0; i < 4; ++i) {
                 int dx = i % 2;
                 int dz = i / 2;
-                if (!getStructurePos(config, seed, rx + dx, rz + dz, &p[i])) {
+                if (!getStructurePos(structType, MC_1_21, (uint64_t)seed, rx + dx, rz + dz, &p[i])) {
                     valid = 0;
                     break;
                 }
 
                 // Biome check
-                if (type == 0) { // Witch Hut
+                if (structType == Swamp_Hut) {
                     int b = getBiomeAt(&g, 4, p[i].x, 64, p[i].z);
                     if (b != swampland) {
                         valid = 0;
                         break;
                     }
                 }
-                // Fortress doesn't need biome check in cubiomes for basic valid position usually,
-                // but for 1.21 nether it's slightly different. Cubiomes handles nether biomes too.
             }
 
             if (valid) {
-                // Find a center point that is within maxDist of all 4 structures
-                // A simple approximation: check the bounding box center
                 int minX = p[0].x, maxX = p[0].x, minZ = p[0].z, maxZ = p[0].z;
                 for(int i=1; i<4; i++) {
                     if(p[i].x < minX) minX = p[i].x;
@@ -73,19 +71,18 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
 
                 bool allClose = true;
                 for(int i=0; i<4; i++) {
-                    double dx = p[i].x - midX;
-                    double dz = p[i].z - midZ;
-                    if (dx*dx + dz*dz > (double)maxDist * maxDist) {
+                    long long dx = p[i].x - midX;
+                    long long dz = p[i].z - midZ;
+                    if (dx*dx + dz*dz > (long long)maxDist * maxDist) {
                         allClose = false;
                         break;
                     }
                 }
 
                 if (allClose) {
-                    // Check if midX, midZ is within search range
-                    double dcx = midX - centerX;
-                    double dcz = midZ - centerZ;
-                    if (dcx*dcx + dcz*dcz <= (double)range * range) {
+                    long long dcx = midX - centerX;
+                    long long dcz = midZ - centerZ;
+                    if (dcx*dcx + dcz*dcz <= (long long)range * range) {
                         char buf[128];
                         sprintf(buf, "%d, %d", midX, midZ);
                         results.push_back(buf);
