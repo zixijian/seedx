@@ -2,6 +2,7 @@
 #include <string>
 #include <vector>
 #include <cstdio>
+#include <algorithm>
 #include "cubiomes/generator.h"
 #include "cubiomes/finders.h"
 
@@ -15,14 +16,6 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
         jint range,
         jint maxDist,
         jint type
-        // 0: 4Hut (Swamp)
-        // 1: 3Hut (Swamp)
-        // 2: 2Hut (Swamp)
-        // 3: 1Hut (Swamp)
-        // 4: 4Fort (Waste)
-        // 5: 3Fort (SSV)
-        // 6: 2Fort (Waste)
-        // 7: 1Fort (Waste)
 ) {
     Generator g;
     setupGenerator(&g, MC_1_21, 0);
@@ -59,40 +52,27 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                 int dx = i % 2;
                 int dz = i / 2;
                 Pos pos;
-                // Important: cubiomes getStructurePos for some structures needs correct salt and version
                 if (getStructurePos(structType, MC_1_21, (uint64_t)seed, rx + dx, rz + dz, &pos)) {
-                    int is_valid = 1;
                     int b = getBiomeAt(&g, 4, pos.x, 64, pos.z);
-                    if (type < 4) { // Hut
-                        if (b != swamp && b != swamp_hills && b != mangrove_swamp) is_valid = 0;
-                    } else { // Fort
-                        if (type == 5) { // 3Fort SSV
-                            if (b != soul_sand_valley) is_valid = 0;
-                        } else { // Other Fort (Waste)
-                            if (b != nether_wastes) is_valid = 0;
-                        }
+                    bool biomeValid = false;
+                    if (type < 4) { // Witch Hut
+                        // Only Swamp (swamp, swamp_hills, mangrove_swamp)
+                        if (b == swamp || b == swamp_hills || b == mangrove_swamp) biomeValid = true;
+                    } else { // Fortress
+                        // Only Soul Sand Valley as requested
+                        if (b == soul_sand_valley) biomeValid = true;
                     }
 
-                    if (is_valid) {
+                    if (biomeValid) {
                         valid_pos.push_back(pos);
                     }
                 }
             }
 
             if ((int)valid_pos.size() >= required) {
-                // For 2, 3, 4 connected structures, we need a center point
                 if (required > 1) {
-                    // Try all combinations of 'required' structures?
-                    // Or just check if the set has any 'required' subset that fits?
-                    // For simplicity and since we only have 4, we can check the min/max of subsets
-                    // But usually they mean 'this 2x2 area has at least N'
-
-                    // Simple approach: Check if ANY subset of size 'required' fits within maxDist to a center
-                    // With 4 structures, there are few combinations
-                    bool found = false;
+                    // Check all combinations of 'required' size
                     int n = valid_pos.size();
-
-                    // Combination indices
                     std::vector<int> indices(required);
                     for(int i=0; i<required; ++i) indices[i] = i;
 
@@ -107,6 +87,7 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                         }
                         int midX = (minX + maxX) / 2;
                         int midZ = (minZ + maxZ) / 2;
+
                         bool allClose = true;
                         for(int i=0; i<required; ++i) {
                             long long dx = valid_pos[indices[i]].x - midX;
@@ -116,6 +97,7 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                                 break;
                             }
                         }
+
                         if (allClose) {
                             long long dcx = midX - centerX;
                             long long dcz = midZ - centerZ;
@@ -123,8 +105,6 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                                 char buf[128];
                                 sprintf(buf, "%d, %d", midX, midZ);
                                 results.push_back(buf);
-                                found = true;
-                                break;
                             }
                         }
 
@@ -151,7 +131,6 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
         }
     }
 
-    // Deduplicate results
     std::sort(results.begin(), results.end());
     results.erase(std::unique(results.begin(), results.end()), results.end());
 

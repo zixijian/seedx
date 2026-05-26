@@ -28,13 +28,13 @@ class MainViewModel : ViewModel() {
         seed = prefs?.getString("last_seed", "") ?: ""
     }
 
+    fun onSeedChange(newSeed: String) {
+        seed = newSeed
+        prefs?.edit()?.putString("last_seed", newSeed)?.apply()
+    }
+
     fun search() {
-        val sStr = seed.trim()
-        val s = sStr.toLongOrNull() ?: 0L
-
-        // Save seed
-        prefs?.edit()?.putString("last_seed", sStr)?.apply()
-
+        val s = seed.trim().toLongOrNull() ?: 0L
         val cx = centerX.toIntOrNull() ?: 0
         val cz = centerZ.toIntOrNull() ?: 0
         val r = range.toIntOrNull() ?: 10000

@@ -93,7 +93,7 @@ fun MainScreen(viewModel: MainViewModel, onExit: () -> Unit) {
         ) {
             OutlinedTextField(
                 value = viewModel.seed,
-                onValueChange = { viewModel.seed = it },
+                onValueChange = { viewModel.onSeedChange(it) },
                 label = { Text("种子") },
                 modifier = Modifier.fillMaxWidth()
             )
@@ -132,10 +132,10 @@ fun MainScreen(viewModel: MainViewModel, onExit: () -> Unit) {
                 "三连女巫小屋 (沼泽)",
                 "二连女巫小屋 (沼泽)",
                 "单女巫小屋 (沼泽)",
-                "四连下界十字路口 (下界荒漠)",
+                "四连下界十字路口 (灵魂沙峡谷)",
                 "三连下界十字路口 (灵魂沙峡谷)",
-                "二连下界十字路口 (下界荒漠)",
-                "单下界十字路口 (下界荒漠)"
+                "二连下界十字路口 (灵魂沙峡谷)",
+                "单下界十字路口 (灵魂沙峡谷)"
             )
             ExposedDropdownMenuBox(
                 expanded = expandedType,
