@@ -123,7 +123,12 @@ fun MainScreen(viewModel: MainViewModel = viewModel(), onExit: () -> Unit) {
             }
 
             var expandedType by remember { mutableStateOf(false) }
-            val types = listOf("四连女巫小屋", "四连下界十字路口")
+            val types = listOf(
+                "四连女巫小屋",
+                "四连下界十字路口",
+                "三连女巫小屋",
+                "三连十字路口 (灵魂沙峡谷)"
+            )
             ExposedDropdownMenuBox(
                 expanded = expandedType,
                 onExpandedChange = { expandedType = !expandedType },
