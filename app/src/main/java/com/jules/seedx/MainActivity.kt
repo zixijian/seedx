@@ -73,6 +73,10 @@ fun MainScreen() {
         topBar = {
             TopAppBar(
                 title = { Text("SeedX") },
+                colors = TopAppBarDefaults.topAppBarColors(
+                    containerColor = MaterialTheme.colorScheme.surface,
+                    titleContentColor = MaterialTheme.colorScheme.primary,
+                ),
                 actions = {
                     IconButton(onClick = { showMenu = true }) {
                         Icon(Icons.Default.MoreVert, contentDescription = "菜单")

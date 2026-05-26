@@ -52,7 +52,7 @@ fun SeedXTheme(
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            window.statusBarColor = ColorScheme.background.toArgb()
+            window.statusBarColor = ColorScheme.surface.toArgb()
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
         }
     }
