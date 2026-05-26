@@ -39,10 +39,25 @@ private val ColorScheme = darkColorScheme(
     onError = SolarizedBase3
 )
 
+import android.app.Activity
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
+
 @Composable
 fun SeedXTheme(
     content: @Composable () -> Unit
 ) {
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = ColorScheme.background.toArgb()
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = false
+        }
+    }
+
     MaterialTheme(
         colorScheme = ColorScheme,
         typography = Typography,
