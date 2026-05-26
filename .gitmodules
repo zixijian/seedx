@@ -1,0 +1,3 @@
+[submodule "app/src/main/cpp/cubiomes"]
+	path = app/src/main/cpp/cubiomes
+	url = https://github.com/cubitect/cubiomes.git
