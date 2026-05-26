@@ -24,9 +24,6 @@ class MainActivity : ComponentActivity() {
         setContent {
             SeedXTheme {
                 val viewModel: MainViewModel = viewModel()
-                LaunchedEffect(Unit) {
-                    viewModel.init(this@MainActivity)
-                }
                 MainScreen(viewModel = viewModel, onExit = {
                     finishAffinity()
                     exitProcess(0)
@@ -128,14 +125,14 @@ fun MainScreen(viewModel: MainViewModel, onExit: () -> Unit) {
 
             var expandedType by remember { mutableStateOf(false) }
             val types = listOf(
-                "四连女巫小屋 (沼泽)",
-                "三连女巫小屋 (沼泽)",
-                "二连女巫小屋 (沼泽)",
-                "单女巫小屋 (沼泽)",
-                "四连下界十字路口 (灵魂沙峡谷)",
-                "三连下界十字路口 (灵魂沙峡谷)",
-                "二连下界十字路口 (灵魂沙峡谷)",
-                "单下界十字路口 (灵魂沙峡谷)"
+                "四连女巫小屋（沼泽）",
+                "三连女巫小屋（沼泽）",
+                "二连女巫小屋（沼泽）",
+                "女巫小屋（沼泽）",
+                "四连十字路口（灵魂沙峡谷）",
+                "三连十字路口（灵魂沙峡谷）",
+                "二连十字路口（灵魂沙峡谷）",
+                "十字路口（灵魂沙峡谷）"
             )
             ExposedDropdownMenuBox(
                 expanded = expandedType,
@@ -200,7 +197,7 @@ fun MainScreen(viewModel: MainViewModel, onExit: () -> Unit) {
         AlertDialog(
             onDismissRequest = { showInstructions = false },
             title = { Text("使用说明") },
-            text = { Text("1. 输入您想要查询的种子（Long类型）。\n2. 设置搜索的起始中心坐标 XZ 及搜索半径。\n3. 设置玩家中心到 4 个结构的最大允许距离（默认 64）。\n4. 选择结构类型并点击计算。") },
+            text = { Text("1. 输入您想要查询的种子（Long类型）。\n2. 设置搜索的起始中心坐标 XZ 及搜索半径。\n3. 设置玩家中心到结构的最大允许距离（默认 64）。\n4. 选择结构类型并点击计算。") },
             confirmButton = {
                 TextButton(onClick = { showInstructions = false }) { Text("确定") }
             }

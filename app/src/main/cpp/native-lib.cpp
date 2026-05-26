@@ -56,10 +56,8 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                     int b = getBiomeAt(&g, 4, pos.x, 64, pos.z);
                     bool biomeValid = false;
                     if (type < 4) { // Witch Hut
-                        // Only Swamp (swamp, swamp_hills, mangrove_swamp)
                         if (b == swamp || b == swamp_hills || b == mangrove_swamp) biomeValid = true;
                     } else { // Fortress
-                        // Only Soul Sand Valley as requested
                         if (b == soul_sand_valley) biomeValid = true;
                     }
 
@@ -71,7 +69,6 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
 
             if ((int)valid_pos.size() >= required) {
                 if (required > 1) {
-                    // Check all combinations of 'required' size
                     int n = valid_pos.size();
                     std::vector<int> indices(required);
                     for(int i=0; i<required; ++i) indices[i] = i;
@@ -108,7 +105,6 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                             }
                         }
 
-                        // Next combination
                         int i = required - 1;
                         while(i >= 0 && indices[i] == n - required + i) i--;
                         if(i < 0) break;
@@ -116,7 +112,6 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                         for(int j=i+1; j<required; ++j) indices[j] = indices[i] + j - i;
                     }
                 } else {
-                    // Single structure
                     for(auto& pos : valid_pos) {
                         long long dcx = pos.x - centerX;
                         long long dcz = pos.z - centerZ;

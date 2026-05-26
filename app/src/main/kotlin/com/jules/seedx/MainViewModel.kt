@@ -1,16 +1,19 @@
 package com.jules.seedx
 
+import android.app.Application
 import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
-import androidx.lifecycle.ViewModel
+import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
-class MainViewModel : ViewModel() {
-    var seed by mutableStateOf("")
+class MainViewModel(application: Application) : AndroidViewModel(application) {
+    private val prefs = application.getSharedPreferences("seedx_prefs", Context.MODE_PRIVATE)
+
+    var seed by mutableStateOf(prefs.getString("last_seed", "") ?: "")
     var centerX by mutableStateOf("0")
     var centerZ by mutableStateOf("0")
     var range by mutableStateOf("10000")
@@ -21,16 +24,10 @@ class MainViewModel : ViewModel() {
     var isSearching by mutableStateOf(false)
 
     private val native = SeedXNative()
-    private var prefs: android.content.SharedPreferences? = null
-
-    fun init(context: Context) {
-        prefs = context.getSharedPreferences("seedx_prefs", Context.MODE_PRIVATE)
-        seed = prefs?.getString("last_seed", "") ?: ""
-    }
 
     fun onSeedChange(newSeed: String) {
         seed = newSeed
-        prefs?.edit()?.putString("last_seed", newSeed)?.apply()
+        prefs.edit().putString("last_seed", newSeed).apply()
     }
 
     fun search() {
