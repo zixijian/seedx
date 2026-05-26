@@ -1,5 +1,6 @@
 package com.jules.seedx
 
+import android.content.Context
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -14,15 +15,26 @@ class MainViewModel : ViewModel() {
     var centerZ by mutableStateOf("0")
     var range by mutableStateOf("10000")
     var maxDist by mutableStateOf("64")
-    var selectedType by mutableStateOf(0) // 0: Witch Hut, 1: Fortress
+    var selectedType by mutableStateOf(0)
 
     var results by mutableStateOf<List<String>>(emptyList())
     var isSearching by mutableStateOf(false)
 
     private val native = SeedXNative()
+    private var prefs: android.content.SharedPreferences? = null
+
+    fun init(context: Context) {
+        prefs = context.getSharedPreferences("seedx_prefs", Context.MODE_PRIVATE)
+        seed = prefs?.getString("last_seed", "") ?: ""
+    }
 
     fun search() {
-        val s = seed.toLongOrNull() ?: 0L
+        val sStr = seed.trim()
+        val s = sStr.toLongOrNull() ?: 0L
+
+        // Save seed
+        prefs?.edit()?.putString("last_seed", sStr)?.apply()
+
         val cx = centerX.toIntOrNull() ?: 0
         val cz = centerZ.toIntOrNull() ?: 0
         val r = range.toIntOrNull() ?: 10000

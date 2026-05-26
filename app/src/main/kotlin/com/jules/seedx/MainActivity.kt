@@ -23,7 +23,11 @@ class MainActivity : ComponentActivity() {
         super.onCreate(savedInstanceState)
         setContent {
             SeedXTheme {
-                MainScreen(onExit = {
+                val viewModel: MainViewModel = viewModel()
+                LaunchedEffect(Unit) {
+                    viewModel.init(this@MainActivity)
+                }
+                MainScreen(viewModel = viewModel, onExit = {
                     finishAffinity()
                     exitProcess(0)
                 })
@@ -34,7 +38,7 @@ class MainActivity : ComponentActivity() {
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun MainScreen(viewModel: MainViewModel = viewModel(), onExit: () -> Unit) {
+fun MainScreen(viewModel: MainViewModel, onExit: () -> Unit) {
     var showMenu by remember { mutableStateOf(false) }
     var showInstructions by remember { mutableStateOf(false) }
     var showAbout by remember { mutableStateOf(false) }
@@ -124,10 +128,14 @@ fun MainScreen(viewModel: MainViewModel = viewModel(), onExit: () -> Unit) {
 
             var expandedType by remember { mutableStateOf(false) }
             val types = listOf(
-                "四连女巫小屋",
-                "四连下界十字路口",
-                "三连女巫小屋",
-                "三连十字路口 (灵魂沙峡谷)"
+                "四连女巫小屋 (沼泽)",
+                "三连女巫小屋 (沼泽)",
+                "二连女巫小屋 (沼泽)",
+                "单女巫小屋 (沼泽)",
+                "四连下界十字路口 (下界荒漠)",
+                "三连下界十字路口 (灵魂沙峡谷)",
+                "二连下界十字路口 (下界荒漠)",
+                "单下界十字路口 (下界荒漠)"
             )
             ExposedDropdownMenuBox(
                 expanded = expandedType,
