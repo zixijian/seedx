@@ -45,7 +45,6 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
 
     for (int rz = startRegionZ; rz < endRegionZ; ++rz) {
         for (int rx = startRegionX; rx < endRegionX; ++rx) {
-            Pos p[4];
             std::vector<Pos> valid_pos;
 
             for (int i = 0; i < 4; ++i) {
@@ -53,7 +52,8 @@ Java_com_jules_seedx_SeedXNative_findQuadStructures(
                 int dz = i / 2;
                 Pos pos;
                 if (getStructurePos(structType, MC_1_21, (uint64_t)seed, rx + dx, rz + dz, &pos)) {
-                    int b = getBiomeAt(&g, 4, pos.x, 64, pos.z);
+                    // Fix: Use scale 1 for block coordinates
+                    int b = getBiomeAt(&g, 1, pos.x, 64, pos.z);
                     bool biomeValid = false;
                     if (type < 4) { // Witch Hut
                         if (b == swamp || b == swamp_hills || b == mangrove_swamp) biomeValid = true;
