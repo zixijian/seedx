@@ -1,10 +1,15 @@
 package com.jules.seedx.ui.theme
 
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.darkColorScheme
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
 // Solarized Dark colors
 val SolarizedBase03 = Color(0xFF002b36)
@@ -38,12 +43,6 @@ private val ColorScheme = darkColorScheme(
     error = SolarizedRed,
     onError = SolarizedBase3
 )
-
-import android.app.Activity
-import androidx.compose.runtime.SideEffect
-import androidx.compose.ui.graphics.toArgb
-import androidx.compose.ui.platform.LocalView
-import androidx.core.view.WindowCompat
 
 @Composable
 fun SeedXTheme(
